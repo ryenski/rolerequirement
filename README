@@ -1,0 +1,39 @@
+RoleRequirement
+===============
+
+RoleRequirement is a limited-purpose authorization plugin for Rails apps. It performs controller-level authorization checks against a Roles table. No unit-level authorization is provided. 
+
+The design pattern bears an uncanny resemblance to DHH's SslRequirement plugin. That's because it's modeled after it (thanks DHH). 
+
+This plugin assumes that you have a User model that has_one Role. The Role model can look like anything as long as it has a #name attribute. It also looks for a current_user method in your controller. 
+
+to enable the plugin, include the RoleRequirement module in your ApplicationController.
+
+Example
+=======
+  
+  class ApplicationController < ActiveRecord::Base
+    include RoleRequirement
+  end
+  
+  class UsersController < ApplicationController
+    require_role :administrator, :new, :create, :edit, :update, :destroy
+  
+    def index
+      # no authorization required
+    end
+  
+    def new # create, edit, update, destroy
+      # Must be an administrator
+    end
+  end
+
+  class ArticlesController < ApplicationController
+    require_role [:administrator, :author], :index, :show, :new, :create, :edit, :update
+  
+    def :index # show, new, create, edit, update
+      Must be an administrator or an author
+    end
+  end
+
+Copyright (c) 2008 Ryan Heneise, released under the MIT license
