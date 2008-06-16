@@ -7,14 +7,14 @@ module RoleRequirement
   
   module ClassMethods
     def require_role(roles, *actions)
-      write_inheritable_array(:require_role, [roles].flatten)
-      write_inheritable_array(:require_role_actions, actions)
+      write_inheritable_attribute(:require_role, [roles].flatten)
+      write_inheritable_attribute(:require_role_actions, actions)
     end
   end
   
   protected
     def has_role?
-      (self.class.read_inheritable_attribute(:require_role) || []).include?(current_user.role.name.downcase.to_sym)
+      (self.class.read_inheritable_attribute(:require_role) || []).include?(current_user ? current_user.role.name.downcase.to_sym : nil)
     end
     
     def action_protected?
@@ -35,8 +35,16 @@ module RoleRequirement
           action_name
         end
         
-        flash[:error] = "#{current_user.role.name.pluralize} are not authorized to #{this_action} #{controller_name}."
-        redirect_to :back and return false
+        error_message = current_user ? "#{current_user.role.name.pluralize} are not authorized to #{this_action} #{controller_name}." : "Error: access denied."
+        
+        if request.xhr?
+          render :update do |page|
+            page.alert(error_message)
+          end
+        else
+          flash[:error] = error_message
+          (redirect_to(:back) rescue redirect_to("/")) and return false
+        end
       end
     end
 end

@@ -35,5 +35,13 @@ Example
       Must be an administrator or an author
     end
   end
+  
+Contributors
+============
 
-Copyright (c) 2008 Ryan Heneise, released under the MIT license
+* Ryan Heneise
+* Special thanks for David Heinemeier Hansson for the design pattern that this plugin follows. 
+
+Copyright (c) 2008 Ryan Heneise, released under the MIT license. 
+
+"Rails" and "Ruby on Rails", are trademarks of David Heinemeier Hansson. All rights reserved.
